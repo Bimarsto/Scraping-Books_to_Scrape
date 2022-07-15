@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import csv
 
 main_url = 'http://books.toscrape.com'
 product_page_url = main_url + '/catalogue/tipping-the-velvet_999/index.html'
@@ -24,14 +23,24 @@ def convert_star_rating(star_rating):
 
 def format_data(string_data):
     data = string_data
-    if 'â' in data:
+    while 'â' in data:
         data = data.replace('â', "'")
-    elif 'Â£' in data:
+    while 'â' in data:
+        data = data.replace('â', "'")
+    while 'Â£' in data:
         data = data.replace('Â£', '£')
-    elif 'â\x80\x94' in data:
+    while 'â\x80\x94' in data:
         data = data.replace('â\x80\x94', '—')
-    elif 'â' in data:
+    while 'â' in data:
         data = data.replace('â', '—')
+    while 'â' in data:
+        data = data.replace('â', '—')
+    while 'â' in data:
+        data = data.replace('â', '"')
+    while 'â' in data:
+        data = data.replace('â', '"')
+    while 'â¦' in data:
+        data = data.replace('â¦', '...')
     return data
 
 
