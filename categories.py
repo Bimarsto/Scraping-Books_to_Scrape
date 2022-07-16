@@ -12,10 +12,10 @@ products_information_data = []
 
 
 def find_number_of_pages(number_of_products):
-    if number_of_products/20 >= 0.5:
+    if number_of_products/20 > 0.5:
         number_of_pages = int(round(number_of_products/20,0))
     else:
-        number_of_pages = int(round(number_of_products/20,0))
+        number_of_pages = int(round(number_of_products/20,0) + 1)
     return str(number_of_pages)
 
 
@@ -24,7 +24,7 @@ def format_product_url(product_url):
     return product_page_url
 
 
-def get_page_products_information(page_url,number_of_products):
+def get_page_products_information(page_url):
     response = requests.get(page_url)
     soup = BeautifulSoup(response.text, 'lxml')
     products_in_page = soup.find('ol')
@@ -37,18 +37,19 @@ def get_page_products_information(page_url,number_of_products):
 
 def get_category_products_information(category_page_url):
     response = requests.get(category_page_url)
+    print(response)
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
         number_of_products = soup.find('form').findNext('strong').text
         number_of_pages = find_number_of_pages(int(number_of_products))
         print(category_page_url)
         if number_of_pages == 1 :
-            get_page_products_information(category_page_url,number_of_products)
+            get_page_products_information(category_page_url)
         else:
             for i in range(int(number_of_pages)):
                 if i == 0:
-                   get_page_products_information(category_page_url,number_of_products)
+                   get_page_products_information(category_page_url)
                 else:
-                    get_page_products_information(category_page_url.replace('index','page-' + str(i + 1)),number_of_products)
+                    get_page_products_information(category_page_url.replace('index','page-' + str(i + 1)))
         print('Catégorie terminée!')
         return products_information_data

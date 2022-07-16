@@ -86,5 +86,4 @@ def get_product_information(product_page_url):
         product_information_data = [product_page_url, upc, title, price_including_tax, price_excluding_tax,
                                     number_available, product_description, category, review_rating, image_url]
         return product_information_data
-
-print(get_product_information(product_page_url))
+    print(get_product_information(product_page_url))
