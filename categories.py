@@ -12,10 +12,7 @@ products_information_data = []
 
 
 def find_number_of_pages(number_of_products):
-    if number_of_products/20 > 0.5:
-        number_of_pages = int(round(number_of_products/20,0))
-    else:
-        number_of_pages = int(round(number_of_products/20,0) + 1)
+    number_of_pages = int(round(number_of_products/20,0))
     return str(number_of_pages)
 
 
@@ -41,8 +38,13 @@ def get_category_products_information(category_page_url):
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
         number_of_products = soup.find('form').findNext('strong').text
-        number_of_pages = find_number_of_pages(int(number_of_products))
+        if int(number_of_products) < 20:
+            number_of_pages = 1
+        else:
+            number_of_pages = int(soup.find('li', 'current').text.replace(' Page 1 of ','').replace(' ',''))
+        #number_of_pages = find_number_of_pages(int(number_of_products))
         print(category_page_url)
+        print('Nombre de pages : ' + str(number_of_pages))
         if number_of_pages == 1 :
             get_page_products_information(category_page_url)
         else:
