@@ -1,6 +1,8 @@
 import requests
+import urllib.request
+import os
 from bs4 import BeautifulSoup
-from constants import main_url
+from constants import main_url, products_path, images_folder
 
 
 product_page_url = main_url + '/catalogue/full-moon-over-noahs-ark-an-odyssey-to-mount-ararat-and-beyond_811/index.html'
@@ -65,6 +67,16 @@ def format_category(raw_category):
     return category
 
 
+def test_images_folder():
+    if not os.path.exists(images_folder):
+        os.makedirs(images_folder)
+
+def get_product_image(image_url, product_page_url):
+    test_images_folder()
+    title = product_page_url.replace(main_url + products_path + '/', '').replace('/index.html', '')
+    urllib.request.urlretrieve(image_url, images_folder + '/' + title + '.jpg')
+
+
 def get_product_information(product_page_url):
     response = requests.get(product_page_url)
     if response.ok:
@@ -73,17 +85,17 @@ def get_product_information(product_page_url):
         upc = product_information.find(string='UPC').findParent('tr').findChild('td').text
         price_including_tax = format_data(product_information.find(string='Price (incl. tax)').findParent('tr').findChild('td').text)
         price_excluding_tax = format_data(product_information.find(string='Price (excl. tax)').findParent('tr').findChild('td').text)
+        title = format_data(soup.find('h1').text)
         image_url = soup.find('img').attrs['src'].replace('../..', main_url)
+        get_product_image(image_url,product_page_url)
         if soup.find(string='Product Description'):
             product_description = format_data(soup.find(string='Product Description').findNext('p').text)
         else:
             product_description = ''
         number_available = format_number_available(product_information.find(string='Availability').findParent('tr').findChild('td').text)
         category = format_category(soup.find('ul', 'breadcrumb').find(string='Books').findNext('li').text)
-        title = format_data(soup.find('h1').text)
         star_rating = soup.find('p', 'star-rating').attrs['class']
         review_rating = convert_star_rating(star_rating)
         product_information_data = [product_page_url, upc, title, price_including_tax, price_excluding_tax,
                                     number_available, product_description, category, review_rating, image_url]
         return product_information_data
-    print(get_product_information(product_page_url))

@@ -34,9 +34,9 @@ def get_page_products_information(page_url):
 
 def get_category_products_information(category_page_url):
     response = requests.get(category_page_url)
-    print(response)
     if response.ok:
         soup = BeautifulSoup(response.text, 'lxml')
+        category_name = soup.find('h1').text
         number_of_products = soup.find('form').findNext('strong').text
         if int(number_of_products) < 20:
             number_of_pages = 1
@@ -44,7 +44,7 @@ def get_category_products_information(category_page_url):
             number_of_pages = int(soup.find('li', 'current').text.replace(' Page 1 of ','').replace(' ',''))
         #number_of_pages = find_number_of_pages(int(number_of_products))
         print(category_page_url)
-        print('Nombre de pages : ' + str(number_of_pages))
+        print(category_name +'=> Nombre de pages : ' + str(number_of_pages))
         if number_of_pages == 1 :
             get_page_products_information(category_page_url)
         else:
@@ -53,5 +53,5 @@ def get_category_products_information(category_page_url):
                    get_page_products_information(category_page_url)
                 else:
                     get_page_products_information(category_page_url.replace('index','page-' + str(i + 1)))
-        print('Catégorie terminée!')
-        return products_information_data
+        print('Catégorie ' + category_name + ' terminée!')
+        return [category_name, products_information_data]
