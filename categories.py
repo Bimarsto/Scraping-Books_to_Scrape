@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import csv
 from products import get_product_information
 from constants import main_url, products_path
 
@@ -42,7 +41,6 @@ def get_category_products_information(category_page_url):
             number_of_pages = 1
         else:
             number_of_pages = int(soup.find('li', 'current').text.replace(' Page 1 of ','').replace(' ',''))
-        #number_of_pages = find_number_of_pages(int(number_of_products))
         print(category_page_url)
         print(category_name +'=> Nombre de pages : ' + str(number_of_pages))
         if number_of_pages == 1 :

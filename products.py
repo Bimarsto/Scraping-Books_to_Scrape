@@ -67,14 +67,16 @@ def format_category(raw_category):
     return category
 
 
-def test_images_folder():
+def test_images_folder(category):
     if not os.path.exists(images_folder):
         os.makedirs(images_folder)
+    if not os.path.exists(images_folder + '/' + category):
+        os.mkdir(images_folder + '/' + category)
 
-def get_product_image(image_url, product_page_url):
-    test_images_folder()
+def get_product_image(image_url, product_page_url,category):
+    test_images_folder(category)
     title = product_page_url.replace(main_url + products_path + '/', '').replace('/index.html', '')
-    urllib.request.urlretrieve(image_url, images_folder + '/' + title + '.jpg')
+    urllib.request.urlretrieve(image_url, images_folder + '/' + category + '/' + title + '.jpg')
 
 
 def get_product_information(product_page_url):
@@ -86,14 +88,14 @@ def get_product_information(product_page_url):
         price_including_tax = format_data(product_information.find(string='Price (incl. tax)').findParent('tr').findChild('td').text)
         price_excluding_tax = format_data(product_information.find(string='Price (excl. tax)').findParent('tr').findChild('td').text)
         title = format_data(soup.find('h1').text)
+        category = format_category(soup.find('ul', 'breadcrumb').find(string='Books').findNext('li').text)
         image_url = soup.find('img').attrs['src'].replace('../..', main_url)
-        get_product_image(image_url,product_page_url)
+        get_product_image(image_url,product_page_url,category)
         if soup.find(string='Product Description'):
             product_description = format_data(soup.find(string='Product Description').findNext('p').text)
         else:
             product_description = ''
         number_available = format_number_available(product_information.find(string='Availability').findParent('tr').findChild('td').text)
-        category = format_category(soup.find('ul', 'breadcrumb').find(string='Books').findNext('li').text)
         star_rating = soup.find('p', 'star-rating').attrs['class']
         review_rating = convert_star_rating(star_rating)
         product_information_data = [product_page_url, upc, title, price_including_tax, price_excluding_tax,

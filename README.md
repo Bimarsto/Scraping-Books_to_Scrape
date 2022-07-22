@@ -35,6 +35,23 @@ For this script, you need following packages and :
 <img src='https://img.shields.io/badge/bs4-v0.0.1-blue'>
 <img src='https://img.shields.io/badge/lxml-v4.9.1-blue'>
 
+It is recommended to use a virtual environment. To do this, follow the instructions below:
+
+For all the following instructions, you must be in the terminal in the folder chosen to run the script.
+```
+# Create the vitrual environment
+$ python -m venv env
+
+# Activate the environment on Windows
+$ source env/Scripts/activate
+---
+or
+---
+# Activate the envirenment on Linux or MacOS
+$ source env/bin/activate
+
+```
+
 To install this packages in your environment you can use the following pip instruction:
 ```
 pip install requests==2.24.0
